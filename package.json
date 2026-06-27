@@ -1,0 +1,9 @@
+{
+  "name": "qubcloud-fraudguard-frontend",
+  "version": "1.0.0",
+  "description": "QUBCloud-FraudGuard frontend — static page served by a tiny Node server.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
