@@ -21,7 +21,7 @@ function screenTransactions() {
   clearOutput(); // wipe any previous results
 
   // Build the address and send the request to the screening service.
-  const url = SCREENING_URL + "/screen?items=" + encodeURIComponent(items);
+  const url = SCREENING_URL + "screen?items=" + encodeURIComponent(items);
 
   fetch(url)
     .then((response) => response.json()) // turn the reply into a JS object
@@ -36,7 +36,7 @@ function tallyTransactions() {
   const items = readInput();
   clearOutput();
 
-  const url = TALLY_URL + "/tally?items=" + encodeURIComponent(items);
+  const url = TALLY_URL + "tally?items=" + encodeURIComponent(items);
 
   fetch(url)
     .then((response) => response.json())
