@@ -21,7 +21,7 @@ function screenTransactions() {
   clearOutput(); // wipe any previous results
 
   // Build the address and send the request to the screening service.
-  const url = SCREENING_URL + "screen?items=" + encodeURIComponent(items);
+  const screeningUrl = SCREENING_URL + "screen?items=" + encodeURIComponent(items);
   const reputationUrl = REPUTATION_URL + "screen?items=" + encodeURIComponent(items);
 
   Promise.all([
