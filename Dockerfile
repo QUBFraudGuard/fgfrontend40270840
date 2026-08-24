@@ -14,6 +14,7 @@ COPY . .
 # (These defaults suit local running; override them when deploying.)
 ENV SCREENING_URL=http://screening.40270840.qpc.qubcloud.uk/
 ENV TALLY_URL=http://countrytally.40270840.qpc.qubcloud.uk/
+ENV REPUTATION_URL=http://reputation.40270840.qpc.qubcloud.uk/
 EXPOSE 8080
 
 # server.js serves ./public on 0.0.0.0:8080.

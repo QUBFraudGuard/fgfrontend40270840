@@ -22,12 +22,48 @@ function screenTransactions() {
 
   // Build the address and send the request to the screening service.
   const url = SCREENING_URL + "screen?items=" + encodeURIComponent(items);
+  const reputationUrl = REPUTATION_URL + "screen?items=" + encodeURIComponent(items);
 
-  fetch(url)
-    .then((response) => response.json()) // turn the reply into a JS object
-    .then((data) => renderScreenResults(data)) // draw it on the page
-    .catch((err) => showError(err)); // something went wrong
+  Promise.all([
+    fetch(screeningUrl).then((response) => response.json()),
+    fetch(reputationUrl).then((response) => response.json()),
+  ])
+    .then(([screeningData, reputationData]) => {
+      const merged = mergeResults(screeningData.results, reputationData.results, items);
+      renderScreenResults(merged);
+    })
+    .catch((err) => showError(err));
 }
+
+
+function mergeResults(easyResults, repResults, items) {
+  const results = easyResults.map((easy, i) => {
+    const rep = repResults[i];
+
+    // A malformed transaction is malformed regardless of which service
+    // caught it first — but prefer whichever result actually flags ERROR.
+    if (easy.decision === "ERROR") return easy;
+    if (rep && rep.decision === "ERROR") return rep;
+
+    // Easy checks (amount/blocklist/country) take priority if suspicious.
+    if (easy.decision === "SUSPICIOUS") return easy;
+
+    // Otherwise defer to the reputation service's decision.
+    if (rep && rep.decision === "SUSPICIOUS") return rep;
+
+    return easy; // both OK
+  });
+
+  const flagged = results.filter((r) => r.decision === "SUSPICIOUS").length;
+
+  return {
+    results: results,
+    total_checked: results.length,
+    flagged: flagged,
+  };
+}
+
+
 
 // ---------------------------------------------------------------------------
 // "Tally" button: ask the country-tally service to count by country.

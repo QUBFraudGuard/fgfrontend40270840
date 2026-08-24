@@ -25,6 +25,7 @@ const PORT = parseInt(process.env.PORT || "8080", 10);
 // The browser must be able to reach these, so they use host addresses.
 const SCREENING_URL = process.env.SCREENING_URL || "http://localhost:8070";
 const TALLY_URL = process.env.TALLY_URL || "http://localhost:8071";
+const REPUTATION_URL = process.env.REPUTATION_URL || "http://localhost:8072";
 
 // The folder that holds the web page files.
 const PUBLIC_DIR = path.join(__dirname, "public");
@@ -55,6 +56,7 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, { "Content-Type": "application/javascript" });
     res.end(
       `const SCREENING_URL = ${JSON.stringify(SCREENING_URL)};\n` +
+        `const REPUTATION_URL = ${JSON.stringify(REPUTATION_URL)};\n` +
         `const TALLY_URL = ${JSON.stringify(TALLY_URL)};`
     );
     return;
@@ -89,6 +91,6 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, "0.0.0.0", () => {
   console.log(
     `frontend serving ./public on :${PORT} ` +
-      `(screening=${SCREENING_URL}, tally=${TALLY_URL})`
+      `(screening=${SCREENING_URL}, reputation=${REPUTATION_URL}, tally=${TALLY_URL})`
   );
 });
