@@ -12,9 +12,7 @@ COPY . .
 
 # The browser reaches the two backend services over host-reachable URLs.
 # (These defaults suit local running; override them when deploying.)
-ENV SCREENING_URL=http://screening.40270840.qpc.qubcloud.uk/
-ENV TALLY_URL=http://countrytally.40270840.qpc.qubcloud.uk/
-ENV REPUTATION_URL=http://reputation.40270840.qpc.qubcloud.uk/
+ENV PROXY_URLS=http://proxy1.40270840.qpc.qubcloud.uk/,http://proxy2.40270840.qpc.qubcloud.uk/
 EXPOSE 8080
 
 # server.js serves ./public on 0.0.0.0:8080.

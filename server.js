@@ -21,11 +21,6 @@ const path = require("path"); // helps build safe file paths
 
 // Settings, read from environment variables with sensible defaults.
 const PORT = parseInt(process.env.PORT || "8080", 10);
-// The two backend services the web page calls directly (no gateway in between).
-// The browser must be able to reach these, so they use host addresses.
-const SCREENING_URL = process.env.SCREENING_URL || "http://localhost:8070";
-const TALLY_URL = process.env.TALLY_URL || "http://localhost:8071";
-const REPUTATION_URL = process.env.REPUTATION_URL || "http://localhost:8072";
 
 // The folder that holds the web page files.
 const PUBLIC_DIR = path.join(__dirname, "public");
@@ -43,6 +38,8 @@ const CONTENT_TYPES = {
   ".ico": "image/x-icon",
 };
 
+const PROXY_URLS = (process.env.PROXY_URLS || "http://localhost:8080/").split(",");
+
 // This function runs for EVERY request the browser makes.
 const server = http.createServer((req, res) => {
   // Remove anything after "?" and treat the home page "/" as index.html.
@@ -55,9 +52,7 @@ const server = http.createServer((req, res) => {
   if (urlPath === "/config.js") {
     res.writeHead(200, { "Content-Type": "application/javascript" });
     res.end(
-      `const SCREENING_URL = ${JSON.stringify(SCREENING_URL)};\n` +
-        `const REPUTATION_URL = ${JSON.stringify(REPUTATION_URL)};\n` +
-        `const TALLY_URL = ${JSON.stringify(TALLY_URL)};`
+        `const PROXY_URLS = ${JSON.stringify(PROXY_URLS)};`
     );
     return;
   }
@@ -91,6 +86,6 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, "0.0.0.0", () => {
   console.log(
     `frontend serving ./public on :${PORT} ` +
-      `(screening=${SCREENING_URL}, reputation=${REPUTATION_URL}, tally=${TALLY_URL})`
+      `(proxies=${PROXY_URLS.join(", ")})`
   );
 });

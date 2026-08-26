@@ -16,17 +16,30 @@
 // ---------------------------------------------------------------------------
 // "Screen" button: ask the screening service to judge each transaction.
 // ---------------------------------------------------------------------------
-function screenTransactions() {
-  const items = readInput(); // the text the user typed
-  clearOutput(); // wipe any previous results
 
-  // Build the address and send the request to the screening service.
-  const screeningUrl = SCREENING_URL + "screen?items=" + encodeURIComponent(items);
-  const reputationUrl = REPUTATION_URL + "screen?items=" + encodeURIComponent(items);
+async function callViaProxy(backendName, path, items) {
+  let lastError;
+  for (const base of PROXY_URLS) {
+    try {
+      const url = base + path + "/" + backendName + "?items=" + encodeURIComponent(items);
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("status " + response.status);
+      return await response.json();
+    } catch (err) {
+      lastError = err;
+      continue; // try the next proxy endpoint
+    }
+  }
+  throw lastError || new Error("all proxy endpoints unreachable");
+}
+
+function screenTransactions() {
+  const items = readInput();
+  clearOutput();
 
   Promise.all([
-    fetch(screeningUrl).then((response) => response.json()),
-    fetch(reputationUrl).then((response) => response.json()),
+    callViaProxy("screening", "screen", items),
+    callViaProxy("reputation", "screen", items),
   ])
     .then(([screeningData, reputationData]) => {
       const merged = mergeResults(screeningData.results, reputationData.results, items);
@@ -72,10 +85,7 @@ function tallyTransactions() {
   const items = readInput();
   clearOutput();
 
-  const url = TALLY_URL + "tally?items=" + encodeURIComponent(items);
-
-  fetch(url)
-    .then((response) => response.json())
+  callViaProxy("tally", "tally", items)
     .then((data) => renderTallyResults(data))
     .catch((err) => showError(err));
 }
