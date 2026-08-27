@@ -187,7 +187,11 @@ function addCell(row, text, className) {
 // address per service and one generic message. Making it robust (retrying,
 // trying a backup service) is your job in the assignment.
 function showError(err) {
-  document.getElementById("summary").textContent =
-    "Something went wrong contacting the service.";
-  console.error(err); // print details to the browser console for debugging
+  const message =
+    err && err.message && err.message.includes("all proxy endpoints unreachable")
+      ? "Unable to reach the screening service right now. Please try again shortly."
+      : "Something went wrong contacting the service. Please try again.";
+
+  document.getElementById("summary").textContent = message;
+  console.error(err);
 }
