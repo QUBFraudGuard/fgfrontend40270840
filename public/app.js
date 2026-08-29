@@ -27,10 +27,12 @@ async function callViaProxy(backendName, path, items) {
       return await response.json();
     } catch (err) {
       lastError = err;
-      continue; // try the next proxy endpoint
+      continue;
     }
   }
-  throw lastError || new Error("all proxy endpoints unreachable");
+  const failure = new Error("all proxy endpoints unreachable");
+  failure.cause = lastError;
+  throw failure;
 }
 
 function screenTransactions() {
