@@ -13,6 +13,7 @@ COPY . .
 # The browser reaches the two backend services over host-reachable URLs.
 # (These defaults suit local running; override them when deploying.)
 ENV PROXY_URLS=http://proxy1.40270840.qpc.qubcloud.uk/,http://proxy2.40270840.qpc.qubcloud.uk/
+ENV SAVE_RECALL_URL=https://fgsaverecall-1081936452928.europe-west2.run.app/
 EXPOSE 8080
 
 # server.js serves ./public on 0.0.0.0:8080.

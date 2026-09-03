@@ -78,6 +78,49 @@ function mergeResults(easyResults, repResults, items) {
   };
 }
 
+function saveTransactions() {
+  const items = readInput();
+
+  fetch(SAVE_RECALL_URL + "save", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items: items }),
+  })
+    .then((response) => {
+      if (!response.ok) throw new Error("status " + response.status);
+      return response.json();
+    })
+    .then((data) => renderSaveResult(data))
+    .catch((err) => showError(err));
+}
+
+
+function recallTransactions() {
+  const batchId = document.getElementById("recall-id").value.trim();
+
+  if (!batchId) {
+    document.getElementById("summary").textContent = "Please enter an ID to recall.";
+    return;
+  }
+
+  fetch(SAVE_RECALL_URL + "recall/" + encodeURIComponent(batchId))
+    .then((response) => {
+      if (!response.ok) throw new Error("status " + response.status);
+      return response.json();
+    })
+    .then((data) => {
+      document.getElementById("input-text").value = data.items;
+      document.getElementById("summary").textContent = "Batch recalled successfully.";
+    })
+    .catch((err) => showError(err));
+}
+
+
+function renderSaveResult(data) {
+  document.getElementById("summary").textContent =
+    "Saved! Your ID: " + data.id + " (write this down to recall it later)";
+}
+
 
 
 // ---------------------------------------------------------------------------

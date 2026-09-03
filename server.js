@@ -39,6 +39,7 @@ const CONTENT_TYPES = {
 };
 
 const PROXY_URLS = (process.env.PROXY_URLS || "http://localhost:8080/").split(",");
+const SAVE_RECALL_URL = process.env.SAVE_RECALL_URL || "http://localhost:8000/";
 
 // This function runs for EVERY request the browser makes.
 const server = http.createServer((req, res) => {
@@ -52,7 +53,8 @@ const server = http.createServer((req, res) => {
   if (urlPath === "/config.js") {
     res.writeHead(200, { "Content-Type": "application/javascript" });
     res.end(
-        `const PROXY_URLS = ${JSON.stringify(PROXY_URLS)};`
+        `const PROXY_URLS = ${JSON.stringify(PROXY_URLS)};` +
+        `const SAVE_RECALL_URL = ${JSON.stringify(SAVE_RECALL_URL)};\n`
     );
     return;
   }
